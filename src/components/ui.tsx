@@ -91,12 +91,52 @@ export function SectionHeading({ index, kanji, title, id }: { index: string; kan
   );
 }
 
+/** The page's content column: centred, max-w-6xl, standard side gutters. */
+export function Container({ children, className }: { children: ReactNode; className?: string }) {
+  return <div className={cx("mx-auto max-w-6xl px-5 sm:px-6", className)}>{children}</div>;
+}
+
+/**
+ * Full-bleed band: the ink-2 surface with gold hairlines top and bottom
+ * (.band in globals.css), spanning the viewport, with a Container inside so
+ * content stays aligned with the rest of the page.
+ *
+ * - as: element to render (default "div"; e.g. "article", "section").
+ * - className: classes on the band itself, typically vertical padding.
+ * - Any other props (id, aria-*...) are forwarded.
+ *
+ * Use it to alternate the page surface. Never put two bands directly next to
+ * each other: separate them with plain-surface content.
+ */
+export function Band({
+  as,
+  className,
+  children,
+  ...rest
+}: {
+  as?: ElementType;
+  className?: string;
+  children: ReactNode;
+  [prop: string]: unknown;
+}) {
+  const El = as ?? "div";
+  return (
+    <El className={cx("band", className)} {...rest}>
+      <Container>{children}</Container>
+    </El>
+  );
+}
+
 /**
  * Page section with the standard container, vertical rhythm, scroll offset
  * for the fixed nav, and a SectionHeading. The heading id is `${id}-title`.
  *
  * Renders: <section id aria-labelledby class="scroll-mt-28 py-16 sm:py-24">
- *            <div class="mx-auto max-w-6xl px-5 sm:px-6"> heading + children
+ *            <Container> heading + children
+ *
+ * - band: the whole section sits on a full-bleed <Band> surface.
+ * - bleed: only the heading is contained; children render at full width and
+ *   manage their own <Container>/<Band>. Not combinable with `band`.
  */
 export function Section({
   id,
@@ -105,6 +145,8 @@ export function Section({
   title,
   children,
   className,
+  band = false,
+  bleed = false,
 }: {
   id: string;
   index: string;
@@ -113,14 +155,33 @@ export function Section({
   children: ReactNode;
   /** Extra classes on the <section>, e.g. to adjust bottom padding. */
   className?: string;
+  band?: boolean;
+  bleed?: boolean;
 }) {
   const titleId = `${id}-title`;
-  return (
-    <section id={id} aria-labelledby={titleId} className={cx("scroll-mt-28 py-16 sm:py-24", className)}>
-      <div className="mx-auto max-w-6xl px-5 sm:px-6">
-        <SectionHeading id={titleId} index={index} kanji={kanji} title={title} />
+  const heading = <SectionHeading id={titleId} index={index} kanji={kanji} title={title} />;
+  const sectionProps = { id, "aria-labelledby": titleId, className: cx("scroll-mt-28 py-16 sm:py-24", className) };
+  if (band) {
+    return (
+      <Band as="section" {...sectionProps}>
+        {heading}
         {children}
-      </div>
+      </Band>
+    );
+  }
+  return (
+    <section {...sectionProps}>
+      {bleed ? (
+        <>
+          <Container>{heading}</Container>
+          {children}
+        </>
+      ) : (
+        <Container>
+          {heading}
+          {children}
+        </Container>
+      )}
     </section>
   );
 }

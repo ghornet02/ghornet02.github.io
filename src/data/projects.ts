@@ -12,8 +12,12 @@ export type Project = {
   highlights: string[];
   tech: string[];
   repo: string;
-  span: "full" | "half";
-  /** Diagram shown full card width below the text; `full` is the full-resolution file. */
+  /**
+   * The flagship project: shown first on its own full-bleed feature band,
+   * with its diagram beside the text. Set on at most one project.
+   */
+  featured?: boolean;
+  /** Architecture diagram (shown on the feature band); `full` is the full-resolution file. */
   image?: { src: string; full: string; alt: string; width: number; height: number };
 };
 
@@ -32,7 +36,7 @@ export const EMAIL: string | undefined = undefined;
 export const LINKEDIN_URL: string | undefined = undefined;
 export const RESUME_URL: string | undefined = undefined;
 
-/** Projects in display order. `span` controls the card width on the two-column grid. */
+/** Projects in display order. The `featured` one gets the feature band; the rest form the card grid. */
 export const projects: Project[] = [
   {
     slug: "distributed-file-system",
@@ -48,7 +52,7 @@ export const projects: Project[] = [
     ],
     tech: ["C", "POSIX sockets", "pthreads", "Bash", "Make"],
     repo: "https://github.com/ghornet02/distributed-file-system",
-    span: "full",
+    featured: true,
     image: {
       src: "/dfs-architecture.webp",
       full: "/dfs-architecture-full.png",
@@ -71,7 +75,6 @@ export const projects: Project[] = [
     ],
     tech: ["C", "libpcap", "BPF", "Networking"],
     repo: "https://github.com/ghornet02/cshark",
-    span: "half",
   },
   {
     slug: "c-shell",
@@ -87,7 +90,6 @@ export const projects: Project[] = [
     ],
     tech: ["C", "fork / exec", "Signals", "Make"],
     repo: "https://github.com/ghornet02/c-shell",
-    span: "half",
   },
   {
     slug: "software-testing",
@@ -103,7 +105,6 @@ export const projects: Project[] = [
     ],
     tech: ["Python", "pytest", "REST", "Test design"],
     repo: "https://github.com/ghornet02/software-testing",
-    span: "full",
   },
 ];
 
