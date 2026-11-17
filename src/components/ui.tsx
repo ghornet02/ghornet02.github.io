@@ -97,9 +97,9 @@ export function Container({ children, className }: { children: ReactNode; classN
 }
 
 /**
- * Full-bleed band: the ink-2 surface with gold hairlines top and bottom
- * (.band in globals.css), spanning the viewport, with a Container inside so
- * content stays aligned with the rest of the page.
+ * Full-bleed band: the ink-2 surface (.band in globals.css), spanning the
+ * viewport, with a Container inside so content stays aligned with the rest of
+ * the page. It draws no rules; section borders provide the full-width lines.
  *
  * - as: element to render (default "div"; e.g. "article", "section").
  * - className: classes on the band itself, typically vertical padding.
@@ -131,12 +131,16 @@ export function Band({
  * Page section with the standard container, vertical rhythm, scroll offset
  * for the fixed nav, and a SectionHeading. The heading id is `${id}-title`.
  *
- * Renders: <section id aria-labelledby class="scroll-mt-28 py-16 sm:py-24">
+ * Renders: <section id aria-labelledby class="scroll-mt-28 border-t border-line py-16 sm:py-24">
  *            <Container> heading + children
  *
+ * Every section opens with the same full-width hairline (border-t in --line),
+ * matching the nav's bottom border and the footer's top border. These are the
+ * only full-width lines on the page; don't add others.
+ *
  * - band: the whole section sits on a full-bleed <Band> surface.
- * - bleed: only the heading is contained; children render at full width and
- *   manage their own <Container>/<Band>. Not combinable with `band`.
+ * - divider: set false to drop the top hairline (used by Skills, whose band
+ *   edge already separates it from Projects).
  */
 export function Section({
   id,
@@ -146,7 +150,7 @@ export function Section({
   children,
   className,
   band = false,
-  bleed = false,
+  divider = true,
 }: {
   id: string;
   index: string;
@@ -156,11 +160,15 @@ export function Section({
   /** Extra classes on the <section>, e.g. to adjust bottom padding. */
   className?: string;
   band?: boolean;
-  bleed?: boolean;
+  divider?: boolean;
 }) {
   const titleId = `${id}-title`;
   const heading = <SectionHeading id={titleId} index={index} kanji={kanji} title={title} />;
-  const sectionProps = { id, "aria-labelledby": titleId, className: cx("scroll-mt-28 py-16 sm:py-24", className) };
+  const sectionProps = {
+    id,
+    "aria-labelledby": titleId,
+    className: cx("scroll-mt-28 py-16 sm:py-24", divider && "border-t border-line", className),
+  };
   if (band) {
     return (
       <Band as="section" {...sectionProps}>
@@ -171,17 +179,10 @@ export function Section({
   }
   return (
     <section {...sectionProps}>
-      {bleed ? (
-        <>
-          <Container>{heading}</Container>
-          {children}
-        </>
-      ) : (
-        <Container>
-          {heading}
-          {children}
-        </Container>
-      )}
+      <Container>
+        {heading}
+        {children}
+      </Container>
     </section>
   );
 }

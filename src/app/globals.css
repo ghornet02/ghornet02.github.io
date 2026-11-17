@@ -216,14 +216,15 @@ summary:focus-visible,
 }
 
 /* ==========================================================================
-   Band: full-bleed raised surface (ink-2) with gold hairlines top and bottom.
-   Rendered by <Band> (and <Section band>); alternates the page surface.
+   Band: full-bleed raised surface (ink-2). Rendered by <Band> (and
+   <Section band>); alternates the page surface. It draws no rules of its own:
+   every full-width line on the page is a section/footer border-t in --line,
+   so the dividers stay identical whatever the surface.
    Never place two bands directly next to each other.
    ========================================================================== */
 .band {
   position: relative;
   background: var(--ink-2);
-  border-block: 1px solid var(--gold-deep);
 }
 
 /* ==========================================================================
@@ -658,10 +659,9 @@ summary:focus-visible,
     min-height: 0 !important;
   }
 
-  /* Bands lose their surface; a light rule keeps the grouping on paper. */
+  /* Bands lose their surface; the section border-t keeps the grouping on paper. */
   .band {
     background: none !important;
-    border-block: 1px solid var(--line);
     padding-block: 1.5rem !important;
   }
 

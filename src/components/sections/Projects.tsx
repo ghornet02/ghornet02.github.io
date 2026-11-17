@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Button, Card, Container, Eyebrow, GitHubIcon, LinkArrow, Section, Tag } from "@/components/ui";
+import { Button, Card, Eyebrow, GitHubIcon, LinkArrow, Section, Tag } from "@/components/ui";
 import { projects, type Project } from "@/data/projects";
 
 /** Gold diagonal that "strikes" across the card's cut corner on hover or focus. */
@@ -88,14 +88,15 @@ function SourceButton({ project }: { project: Project }) {
 }
 
 /**
- * The flagship project, on the page surface like the rest: text on the left, a large
- * diagram on the right from lg; stacked below lg.
+ * The flagship project as a large card spanning the full grid width: same card
+ * treatment as the others, bigger padding and type. Text on the left and a
+ * large diagram on the right from lg; stacked below lg.
  */
 function FeatureProject({ project }: { project: Project }) {
   const titleId = `project-${project.slug}`;
   return (
-    <Container>
-      <article aria-labelledby={titleId}>
+    <Card as="article" highlight aria-labelledby={titleId} className="min-w-0 md:col-span-2 lg:col-span-3">
+      <Strike />
       <div
         className={
           project.image ? "grid items-center gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-12" : "max-w-3xl"
@@ -130,8 +131,7 @@ function FeatureProject({ project }: { project: Project }) {
         </div>
         {project.image && <Diagram project={project} image={project.image} />}
       </div>
-      </article>
-    </Container>
+    </Card>
   );
 }
 
@@ -162,24 +162,20 @@ function ProjectCard({ project, className }: { project: Project; className?: str
   );
 }
 
-/** The featured project as a wide feature, then the rest as a compact card grid. */
+/** One card grid: the featured project as a full-width card, then the rest as compact cards. */
 export default function Projects() {
   const featured = projects.find((p) => p.featured);
   const rest = projects.filter((p) => p !== featured);
   return (
-    <Section id="projects" index="02" kanji="作" title="Projects" bleed>
-      {featured && <FeatureProject project={featured} />}
-      {rest.length > 0 && (
-        <Container className={featured ? "mt-12 sm:mt-16" : undefined}>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {rest.map((p, i) => {
-              // At two columns an odd last card spans both instead of leaving a hole.
-              const lastOdd = i === rest.length - 1 && rest.length % 2 === 1;
-              return <ProjectCard key={p.slug} project={p} className={lastOdd ? "md:col-span-2 lg:col-span-1" : undefined} />;
-            })}
-          </div>
-        </Container>
-      )}
+    <Section id="projects" index="02" kanji="作" title="Projects">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {featured && <FeatureProject project={featured} />}
+        {rest.map((p, i) => {
+          // At two columns an odd last card spans both instead of leaving a hole.
+          const lastOdd = i === rest.length - 1 && rest.length % 2 === 1;
+          return <ProjectCard key={p.slug} project={p} className={lastOdd ? "md:col-span-2 lg:col-span-1" : undefined} />;
+        })}
+      </div>
     </Section>
   );
 }

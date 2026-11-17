@@ -13,7 +13,7 @@ export type Project = {
   tech: string[];
   repo: string;
   /**
-   * The flagship project: shown first on its own full-bleed feature band,
+   * The flagship project: shown first as a full-width card,
    * with its diagram beside the text. Set on at most one project.
    */
   featured?: boolean;

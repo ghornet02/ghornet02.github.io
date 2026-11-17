@@ -4,7 +4,7 @@ import Contact from "@/components/sections/Contact";
 import Hero from "@/components/sections/Hero";
 import Projects from "@/components/sections/Projects";
 import Skills from "@/components/sections/Skills";
-import { ExternalLink } from "@/components/ui";
+import { Container, ExternalLink } from "@/components/ui";
 import { EMAIL, GITHUB_URL, GITHUB_USER, RESUME_URL } from "@/data/projects";
 
 /** Single-page portfolio. */
@@ -25,9 +25,8 @@ export default function Home() {
         <Skills />
         <Contact />
       </main>
-      <footer className="mx-auto max-w-6xl px-5 pb-12 sm:px-6">
-        <div className="blade" />
-        <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <footer className="border-t border-line">
+        <Container className="flex flex-col gap-4 py-8 sm:flex-row sm:items-center sm:justify-between">
           <p className="t-label text-muted">
             © {new Date().getFullYear()} {GITHUB_USER}
           </p>
@@ -52,7 +51,7 @@ export default function Home() {
               </li>
             )}
           </ul>
-        </div>
+        </Container>
       </footer>
     </>
   );
