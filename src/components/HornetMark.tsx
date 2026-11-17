@@ -9,9 +9,9 @@ export default function HornetMark({ id, className = "" }: { id: string; classNa
     <svg viewBox="0 0 200 240" className={className} aria-hidden="true">
       <defs>
         <linearGradient id={gradient} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#f3d27a" />
-          <stop offset="0.5" stopColor="#d4af37" />
-          <stop offset="1" stopColor="#9c7a1e" />
+          <stop offset="0" style={{ stopColor: "var(--gold-bright)" }} />
+          <stop offset="0.5" style={{ stopColor: "var(--gold)" }} />
+          <stop offset="1" style={{ stopColor: "var(--gold-deep)" }} />
         </linearGradient>
       </defs>
       <g fill="none" stroke={`url(#${gradient})`} strokeWidth="2.2" strokeLinejoin="round">
@@ -22,7 +22,7 @@ export default function HornetMark({ id, className = "" }: { id: string; classNa
       </g>
       <circle cx="100" cy="58" r="11" fill={`url(#${gradient})`} />
       <path d="M100 74 L 116 96 L 112 150 L 100 232 L 88 150 L 84 96 Z" fill={`url(#${gradient})`} />
-      <g stroke="#07070a" strokeWidth="5" strokeLinecap="round">
+      <g style={{ stroke: "var(--ink)" }} strokeWidth="5" strokeLinecap="round">
         <path d="M88 112 H 112" />
         <path d="M88 128 H 112" />
         <path d="M90 144 H 110" />

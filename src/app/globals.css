@@ -1,34 +1,142 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   Design tokens
+   Every colour, cut, edge width and motion value lives here. Components and
+   Tailwind classes read these; never hard-code a hex value elsewhere.
+   ========================================================================== */
 :root {
-  --ink: #07070a;
-  --ink-2: #0e0e13;
-  --ink-3: #16161d;
-  --line: #2a2618;
+  /* Surfaces */
+  --ink: #07070a; /* page background */
+  --ink-2: #0e0e13; /* card fill */
+  --ink-3: #16161d; /* raised card fill (top of card gradient) */
+  --surface-hover: #15120a; /* fill behind a hovered ghost control */
+  --surface-focus: #1b160a; /* fill behind a keyboard-focused edge control */
+
+  /* Lines */
+  --line: #3d3722; /* decorative rules, dividers, tag borders */
+  --line-strong: #6b5a22; /* interactive boundaries, resting card edge (~3:1 on ink) */
+
+  /* Text */
+  --text: #ece6d6; /* headings, primary copy */
+  --text-2: #c9c2b0; /* body copy */
+  --muted: #9a927e; /* secondary copy, captions, tags */
+
+  /* Gold: interactive elements and one emphasis per block only */
   --gold: #d4af37;
   --gold-bright: #f3d27a;
   --gold-deep: #9c7a1e;
-  --text: #ece6d6;
-  --muted: #9a927e;
-  --cut: 22px;
+  --gold-glow: rgba(212, 175, 55, 0.1); /* ambient background glow */
+
+  /* Shape */
+  --cut-lg: 22px; /* clipped corner for cards */
+  --cut-sm: 12px; /* clipped corner for buttons and small cards */
+  --edge-w: 1px; /* edge (border) width; 3px on keyboard focus */
+
+  /* Motion */
+  --dur-fast: 150ms;
+  --dur: 250ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
+/* Mirrors the tokens into Tailwind so `bg-ink-2`, `text-text-2`,
+   `border-line-strong`, `bg-surface-hover`, `ease-brand` etc. exist. */
 @theme inline {
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
   --color-ink-3: var(--ink-3);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-focus: var(--surface-focus);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-text: var(--text);
+  --color-text-2: var(--text-2);
+  --color-muted: var(--muted);
   --color-gold: var(--gold);
   --color-gold-bright: var(--gold-bright);
   --color-gold-deep: var(--gold-deep);
-  --color-text: var(--text);
-  --color-muted: var(--muted);
+  --color-gold-glow: var(--gold-glow);
   --font-display: var(--font-cinzel);
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains);
-  --font-kanji: var(--font-mincho);
+  --ease-brand: var(--ease);
 }
 
+/* ==========================================================================
+   Type scale. These are the only text styles; pair them with a colour class
+   (text-text / text-text-2 / text-muted / text-gold). Usable with variants,
+   e.g. `sm:t-h2`.
+   ========================================================================== */
+@utility t-display {
+  font-family: var(--font-cinzel), serif;
+  font-weight: 700;
+  font-size: clamp(2.25rem, 5.5vw, 4rem);
+  line-height: 1.08;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+}
+
+@utility t-h2 {
+  font-family: var(--font-cinzel), serif;
+  font-weight: 700;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  line-height: 1.15;
+}
+
+@utility t-h3 {
+  font-family: var(--font-cinzel), serif;
+  font-weight: 700;
+  font-size: 1.375rem;
+  line-height: 1.25;
+}
+
+@utility t-lead {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.65;
+  color: var(--text-2);
+}
+
+@utility t-body {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--text-2);
+}
+
+@utility t-small {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+/* The ONLY label style: eyebrows, section indices, buttons, stat labels. */
+@utility t-label {
+  font-family: var(--font-jetbrains), monospace;
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+@utility t-code {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 0.8125rem;
+  line-height: 1.5rem;
+}
+
+@utility t-stat {
+  font-family: var(--font-jetbrains), monospace;
+  font-weight: 700;
+  font-size: 2rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
 html {
   scroll-behavior: smooth;
   color-scheme: dark;
@@ -36,8 +144,8 @@ html {
 
 body {
   background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(212, 175, 55, 0.1), transparent 60%),
-    radial-gradient(900px 500px at -10% 30%, rgba(212, 175, 55, 0.06), transparent 60%),
+    radial-gradient(1200px 600px at 80% -10%, var(--gold-glow), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, color-mix(in srgb, var(--gold-glow) 60%, transparent), transparent 60%),
     var(--ink);
   color: var(--text);
 }
@@ -49,23 +157,15 @@ body {
 
 a:focus-visible,
 button:focus-visible,
-summary:focus-visible {
+summary:focus-visible,
+[tabindex]:focus-visible {
   outline: 2px solid var(--gold-bright);
   outline-offset: 3px;
 }
 
 .kanji {
-  font-family: var(--font-mincho), "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", "Noto Serif CJK JP", "MS Mincho", serif;
   font-weight: 700;
-}
-
-.gold-text {
-  background: linear-gradient(100deg, var(--gold-deep) 0%, var(--gold-bright) 35%, var(--gold) 55%, var(--gold-bright) 75%, var(--gold-deep) 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: sheen 8s linear infinite;
 }
 
 .grain::before {
@@ -78,9 +178,43 @@ summary:focus-visible {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
 
+/* 1px gold rule that fades out at both ends. */
 .blade {
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--gold) 20%, var(--gold-bright) 50%, var(--gold) 80%, transparent);
+}
+
+/* ==========================================================================
+   Clipped-corner shapes
+   .notch  solid shape with two cut corners (top-right, bottom-left).
+   .edge   same shape drawn as a border: the element paints the edge colour,
+           ::before paints the fill inset by --edge-w.
+   Size the cut with --cut-outer (defaults to --cut-lg) or add .cut-sm.
+   Colour the edge with --edge-a (corners) and --edge-b (middle); set only
+   --edge-a for a solid edge. Fill with --fill.
+   ========================================================================== */
+
+/* Registered so edge colours interpolate (gradients themselves can't). */
+@property --edge-a {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #9c7a1e;
+}
+
+@property --edge-b {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #9c7a1e;
+}
+
+.notch,
+.edge {
+  --cut-outer: var(--cut-lg);
+  --cut: var(--cut-outer);
+}
+
+.cut-sm {
+  --cut-outer: var(--cut-sm);
 }
 
 .notch,
@@ -90,38 +224,87 @@ summary:focus-visible {
 }
 
 .edge {
+  --edge-w: 1px;
+  --edge-a: var(--gold-deep);
+  --edge-b: var(--edge-a);
   position: relative;
   isolation: isolate;
-  background: var(--edge-color, var(--gold-deep));
+  background: linear-gradient(140deg, var(--edge-a), var(--edge-b) 35%, var(--edge-b) 65%, var(--edge-a));
+  transition:
+    --edge-a var(--dur) var(--ease),
+    --edge-b var(--dur) var(--ease);
 }
 
 .edge::before {
-  --cut: calc(var(--cut-outer, 22px) - 0.41px);
+  /* An inset 45deg cut shrinks by w * (sqrt(2) - 1) so the inner corner stays parallel. */
+  --cut: calc(var(--cut-outer) - var(--edge-w) * 0.414);
   content: "";
   position: absolute;
-  inset: 1px;
+  inset: var(--edge-w);
   z-index: -1;
   background: var(--fill, var(--ink-2));
-  transition: background 250ms ease;
+  transition: background-color var(--dur) var(--ease);
 }
 
-.edge.sm-cut {
-  --cut: 12px;
-  --cut-outer: 12px;
+/* Keyboard focus on any edge element: 3px bright-gold edge. Outlines can't be
+   used because clip-path would cut them off. */
+.edge:focus-visible {
+  --edge-w: 3px;
+  --edge-a: var(--gold-bright);
+  --edge-b: var(--gold-bright);
+  --fill: var(--surface-focus);
+  outline: none;
 }
 
+.notch:focus-visible {
+  outline: none;
+}
+
+/* ==========================================================================
+   Cards
+   .card               static surface (no hover response). Use for content.
+   .card-highlight     edge brightens on hover/focus-within, no movement.
+                       Use for cards that contain links (project cards).
+   .card-interactive   the card itself is a link: edge brightens and it lifts
+                       2px on hover/focus; no lift while pressed.
+   Always combine with .edge.
+   ========================================================================== */
 .card {
-  --edge-color: linear-gradient(140deg, var(--gold-deep), #3a3018 35%, #3a3018 65%, var(--gold-deep));
+  --edge-a: var(--gold-deep);
+  --edge-b: var(--line-strong);
   --fill: linear-gradient(160deg, var(--ink-3), var(--ink-2) 60%);
-  transition: transform 300ms ease;
 }
 
-.card:hover,
-.card:focus-within {
-  --edge-color: linear-gradient(140deg, var(--gold-bright), var(--gold-deep) 40%, var(--gold-deep) 60%, var(--gold-bright));
-  transform: translateY(-4px);
+.card-highlight:hover,
+.card-highlight:focus-within,
+.card-interactive:hover {
+  --edge-a: var(--gold-bright);
+  --edge-b: var(--gold-deep);
 }
 
+.card-interactive {
+  transition:
+    --edge-a var(--dur) var(--ease),
+    --edge-b var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+
+.card-interactive:hover,
+.card-interactive:focus-visible {
+  transform: translateY(-2px);
+}
+
+.card-interactive:active {
+  transform: none;
+}
+
+/* Keep the focus edge solid bright gold even while hovered. */
+.edge.card-interactive:focus-visible {
+  --edge-a: var(--gold-bright);
+  --edge-b: var(--gold-bright);
+}
+
+/* Gold diagonal across a card's cut corner, drawn on hover/focus. */
 .strike {
   position: absolute;
   top: 0;
@@ -136,27 +319,43 @@ summary:focus-visible {
   stroke-width: 2;
   stroke-dasharray: 60;
   stroke-dashoffset: 60;
-  transition: stroke-dashoffset 280ms ease-out;
+  transition: stroke-dashoffset var(--dur) var(--ease);
 }
 
-.card:hover .strike line,
-.card:focus-within .strike line {
+.card-highlight:hover .strike line,
+.card-highlight:focus-within .strike line,
+.card-interactive:hover .strike line,
+.card-interactive:focus-visible .strike line {
   stroke-dashoffset: 0;
 }
 
-.card .card-kanji {
-  transition: color 280ms ease;
+/* ==========================================================================
+   Buttons (rendered by <Button>; the classes can be used directly too)
+   .btn        shared layout + label type, small cut.
+   .btn-gold   primary: solid gold .notch.
+   .btn-ghost  secondary: gold-edged .edge on ink.
+   ========================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.card:hover .card-kanji,
-.card:focus-within .card-kanji {
-  color: var(--gold);
+.btn-gold,
+.btn-ghost {
+  --cut-outer: var(--cut-sm);
 }
 
 .btn-gold {
   background: linear-gradient(120deg, var(--gold-deep), var(--gold) 45%, var(--gold-bright));
   color: var(--ink);
-  transition: filter 200ms ease, transform 200ms ease;
+  transition:
+    filter var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
 }
 
 .btn-gold:hover {
@@ -164,48 +363,44 @@ summary:focus-visible {
   transform: translateY(-1px);
 }
 
+.btn-gold:active {
+  filter: brightness(0.95);
+  transform: none;
+}
+
+.btn-gold:focus-visible {
+  filter: brightness(1.12);
+  box-shadow:
+    inset 0 0 0 2px var(--ink),
+    inset 0 0 0 5px var(--gold-bright);
+}
+
 .btn-ghost {
-  --edge-color: var(--gold-deep);
+  --edge-a: var(--gold-deep);
   --fill: var(--ink);
   color: var(--gold-bright);
 }
 
 .btn-ghost:hover {
-  --edge-color: var(--gold);
-  --fill: #15120a;
+  --edge-a: var(--gold);
+  --fill: var(--surface-hover);
 }
 
-.notch:focus-visible,
-.edge:focus-visible {
-  outline: none;
-  box-shadow: inset 0 0 0 2px var(--gold-bright);
+.btn-ghost:active {
+  --fill: var(--ink-2);
 }
 
-.btn-gold:focus-visible {
-  filter: brightness(1.15);
-  box-shadow: inset 0 0 0 2px var(--ink), inset 0 0 0 4px var(--gold-bright);
+/* Re-assert focus after .btn-ghost overrides the edge colour. */
+.btn-ghost:focus-visible {
+  --edge-a: var(--gold-bright);
+  --fill: var(--surface-focus);
 }
 
-.edge:focus-visible {
-  --edge-color: var(--gold-bright);
-  --fill: #1b160a;
-}
-
+/* ==========================================================================
+   Motion
+   ========================================================================== */
 .reveal {
-  animation: rise 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
-}
-
-.hover-glow {
-  transition: filter 400ms ease, transform 400ms ease;
-}
-
-.hover-glow:hover {
-  filter: drop-shadow(0 0 22px rgba(212, 175, 55, 0.55));
-  transform: translateY(-4px) rotate(-2deg);
-}
-
-.glow-pulse {
-  animation: glow 4s ease-in-out infinite;
+  animation: rise 900ms var(--ease) both;
 }
 
 .term-line {
@@ -214,34 +409,14 @@ summary:focus-visible {
   animation-delay: var(--d, 0ms);
 }
 
+/* Blinks for ~6s after it appears, then stays solid. */
 .cursor {
   display: inline-block;
   width: 0.55em;
   height: 1.05em;
   vertical-align: text-bottom;
   background: var(--gold-bright);
-  animation: blink 1s steps(1) infinite;
-}
-
-.scroll-blade {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  z-index: 60;
-  transform-origin: 0 50%;
-  transform: scaleX(0);
-  background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright));
-  box-shadow: 0 0 12px rgba(243, 210, 122, 0.6);
-  pointer-events: none;
-}
-
-@supports (animation-timeline: scroll()) {
-  .scroll-blade {
-    animation: progress linear both;
-    animation-timeline: scroll(root);
-  }
+  animation: blink 1s steps(1) 6;
 }
 
 .nav-link[aria-current="true"] {
@@ -259,21 +434,7 @@ summary:focus-visible {
   margin-top: 4px;
   background: var(--gold);
   transform: scaleX(0);
-  transition: transform 250ms ease;
-}
-
-.no-scrollbar {
-  scrollbar-width: none;
-}
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-@keyframes sheen {
-  to {
-    background-position: 200% center;
-  }
+  transition: transform var(--dur) var(--ease);
 }
 
 @keyframes rise {
@@ -284,16 +445,6 @@ summary:focus-visible {
   to {
     opacity: 1;
     transform: none;
-  }
-}
-
-@keyframes glow {
-  0%,
-  100% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 1;
   }
 }
 
@@ -309,39 +460,160 @@ summary:focus-visible {
   }
 }
 
-@keyframes progress {
-  to {
-    transform: scaleX(1);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-  .gold-text,
   .reveal,
-  .glow-pulse,
-  .cursor,
-  .scroll-blade {
+  .cursor {
     animation: none;
   }
   .term-line {
     animation: none;
     opacity: 1;
   }
-  .card,
+  .edge,
+  .edge::before,
+  .card-interactive,
   .btn-gold,
-  .hover-glow,
   .strike line,
-  .nav-link::after,
-  .edge::before {
+  .nav-link::after {
     transition: none;
   }
-  .card:hover,
-  .card:focus-within,
-  .btn-gold:hover,
-  .hover-glow:hover {
+  .card-interactive:hover,
+  .card-interactive:focus-visible,
+  .btn-gold:hover {
     transform: none;
+  }
+}
+
+/* ==========================================================================
+   Projects: diagram scroll frame (WP6)
+   On narrow cards the architecture diagram keeps a 640px minimum width and
+   this frame scrolls sideways. Keep the scrollbar visible so the overflow is
+   discoverable; focus ring comes from the [tabindex]:focus-visible rule.
+   ========================================================================== */
+.diagram-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) var(--ink);
+}
+
+.diagram-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.diagram-scroll::-webkit-scrollbar-track {
+  background: var(--ink);
+}
+
+.diagram-scroll::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+}
+
+/* ==========================================================================
+   Print: light, ink-friendly, no decoration. Nav, grain, glyphs, glow, the
+   skip link and the animated terminal chrome are dropped; clipped corners
+   become plain borders; external link URLs are printed after the link text.
+   ========================================================================== */
+@media print {
+  :root {
+    --ink: #fff;
+    --ink-2: #fff;
+    --ink-3: #fff;
+    --text: #111;
+    --text-2: #222;
+    --muted: #444;
+    --gold: #6b5200;
+    --gold-bright: #4a3a00;
+    --gold-deep: #6b5200;
+    --line: #bbb;
+    --line-strong: #888;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #111;
+  }
+
+  header,
+  .grain::before,
+  .kanji,
+  .strike,
+  .blade,
+  .cursor,
+  .diagram-scroll::-webkit-scrollbar,
+  a[href="#main"],
+  #top > span,
+  #top > div > div > div.pointer-events-none {
+    display: none !important;
+  }
+
+  .reveal,
+  .term-line {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Cut corners become plain borders. */
+  .notch,
+  .edge,
+  .edge::before {
+    clip-path: none !important;
+  }
+
+  .edge {
+    background: none !important;
+    border: 1px solid #888;
+  }
+
+  .edge::before {
+    display: none;
+  }
+
+  .btn-gold {
+    background: none !important;
+    color: #111 !important;
+    border: 1px solid #111;
+  }
+
+  .btn-ghost {
+    color: #111 !important;
+  }
+
+  section {
+    padding-block: 1.5rem !important;
+    min-height: 0 !important;
+  }
+
+  .card,
+  article,
+  figure,
+  dl > div,
+  li {
+    break-inside: avoid;
+  }
+
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  .diagram-scroll {
+    overflow: visible !important;
+  }
+
+  .diagram-scroll > div {
+    min-width: 0 !important;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75rem;
+    word-break: break-all;
+    text-transform: none;
+    letter-spacing: 0;
+    color: #444;
   }
 }
